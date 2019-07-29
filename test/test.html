@@ -1,8 +1,16 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>-->
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Title</title>
+	<style>
+		body div {
+			display: block;
+		}
+		.but {
+			position: fixed;
+		}
+	</style>
 </head>
 <body>
 <div class="but">ffffff</div>
@@ -159,13 +167,16 @@
 <script>
 var a = document.querySelector('.box')
 var b = document.querySelector('.but')
+var body = document.body
 window.onload = function() {
 
-  console.log(a.scrollTop, a.scrollHeight)
+  console.log(body.scrollTop, body.scrollHeight)
 
 }
 b.onclick = function(e) {
+  console.log(a.scrollTop, a.scrollHeight)
   console.log(333)
+  // body.scrollTop = body.scrollHeight
   a.scrollTop = a.scrollHeight
 }
 </script>

@@ -19,6 +19,7 @@
 
 <script>
 import {Input, Icon} from 'element-ui'
+import socket from '../../pages/ioRequest'
 export default {
   name: "panel",
   components: {
@@ -28,19 +29,45 @@ export default {
   data () {
     return {
 	  message: '',
-	  msgList: []
+	  msgList: [],
+	  room: 'world'
 	}
   },
   methods: {
 	handleEnter () {
 	  if (!this.message) return
-	  const publishDate = +new Date()
-	  this.msgList.push({id: 'slef', name: '小小鱼', msg: this.message})
+
+	  const selfMsg = {msg: this.message, name: 'sxy', room: this.room}
+	  socket.emit('sendMsg', selfMsg)
+	  this.msgList.push(selfMsg)
+
 	  this.message = ''
-	  console.log(this.$refs.panel.scrollTop, this.$refs.panel.scrollHeight, 'lll')
-	  this.$refs.panel.scrollTop = this.$refs.panel.scrollHeight
+	  const _this = this
+	  setTimeout(function () {
+		_this.$refs.panel.scrollTop = _this.$refs.panel.scrollHeight
+	  }, 0)
+	}
+  },
+  mounted () {
+    if (this.room) {
+
+	  const _this = this
+	  socket.emit('onlineUsers', {interimName: 'sxy'})
+	  socket.emit('joinRoom', {roomName: this.room})
+
+	  socket.on('joinRoom', function (data) {
+	    _this.msgList = data.initMsgs
+		setTimeout(function () {
+		  _this.$refs.panel.scrollTop = _this.$refs.panel.scrollHeight
+		}, 0)
+	  })
+      socket.on('receiveMsg', function (data) {
+        console.log(data, 'ffff')
+		_this.msgList = data
+	  })
 	}
   }
+
 }
 </script>
 
