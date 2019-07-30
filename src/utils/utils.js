@@ -1,4 +1,4 @@
-export default {
+export {
   getCookie,
   setCookie,
   delCookie

@@ -1,9 +1,19 @@
 <template>
 	<div class="panel-wraper">
 		<div class="panel-main" ref="panel">
-			<div v-for="item in msgList" class="panel-row-msg">
-				<span class="panel-head"><i class="el-icon-key"></i></span>
-				<span class="panel-msg-content">{{item.msg}}</span>
+			<div v-for="item in msgList">
+				<div >
+					<div v-if="item.name === username" style="justify-content: flex-end" class="panel-row-msg">
+
+						<span class="panel-msg-content" >{{item.msg}}</span>
+						<span class="panel-head"><i class="el-icon-key"></i></span>
+					</div>
+					<div v-else style="justify-content: flex-start" class="panel-row-msg">
+						<span class="panel-head"><i class="el-icon-key"></i></span>
+						<span class="panel-msg-content" >{{item.msg}}</span>
+
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -14,34 +24,44 @@
 			</div>
 			<el-input v-model="message" @keyup.enter.native="handleEnter"></el-input>
 		</div>
+		<Login></Login>
 	</div>
 </template>
 
 <script>
 import {Input, Icon} from 'element-ui'
+import Login from './login'
 import socket from '../../pages/ioRequest'
+import {mapState} from 'vuex'
+import {getCookie} from '../../utils/utils'
+
 export default {
   name: "panel",
   components: {
     [Input.name]: Input,
-	[Icon.name]: Icon
+	[Icon.name]: Icon,
+	Login
   },
   data () {
     return {
 	  message: '',
 	  msgList: [],
-	  room: 'world'
+	  room: 'world',
+	  username: decodeURIComponent(getCookie('username'))
 	}
   },
   methods: {
 	handleEnter () {
 	  if (!this.message) return
-
-	  const selfMsg = {msg: this.message, name: 'sxy', room: this.room}
+	  const username = decodeURIComponent(getCookie('username'))
+	  const selfMsg = {msg: this.message, name: username, room: this.room}
 	  socket.emit('sendMsg', selfMsg)
 	  this.msgList.push(selfMsg)
-
 	  this.message = ''
+	  this.scrollBottom()
+	},
+
+	scrollBottom () {
 	  const _this = this
 	  setTimeout(function () {
 		_this.$refs.panel.scrollTop = _this.$refs.panel.scrollHeight
@@ -57,15 +77,18 @@ export default {
 
 	  socket.on('joinRoom', function (data) {
 	    _this.msgList = data.initMsgs
-		setTimeout(function () {
-		  _this.$refs.panel.scrollTop = _this.$refs.panel.scrollHeight
-		}, 0)
+		_this.scrollBottom()
 	  })
       socket.on('receiveMsg', function (data) {
-        console.log(data, 'ffff')
-		_this.msgList = data
+		_this.msgList.push(data)
+		_this.scrollBottom()
 	  })
 	}
+  },
+  computed: {
+	// username () {
+     //  return decodeURIComponent(getCookie('username'))
+	// }
   }
 
 }
@@ -109,12 +132,14 @@ export default {
 	}
 	.panel-row-msg span {
 		display: inline-block;
+		margin-left: 8px;
 	}
 	.panel-head {
-		width: 20px;
-		height: 20px;
-		margin-right: 7px;
-		font-size: 20px;
+		width: 30px;
+		height: 30px;
+		font-size: 30px;
+		border-radius: 50%;
+		border: 1px solid darkorchid;
 	}
 	.panel-msg-content {
 		max-width: 50%;

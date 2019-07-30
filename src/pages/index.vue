@@ -1,7 +1,10 @@
 <template>
 	<div>
 		<div class="main">
-			<p>在线人数：{{mans}}</p>
+			<p>
+				<!--<span>在线人数：{{mans}}</span>-->
+				<span>welcome <span style="color: darkorchid">{{username}}</span>~</span>
+			</p>
 			<Panel>
 				3333
 			</Panel>
@@ -11,9 +14,8 @@
 
 <script>
 import Panel from '../components/template/panel'
-// import io from 'socket.io-client'
-// const socket = io('http://localhost:3003')
-import socket from './ioRequest'
+import {mapState} from 'vuex'
+import {getCookie} from '../utils/utils'
 
 export default {
   name: "index",
@@ -23,6 +25,7 @@ export default {
   data () {
     return {
       mans: '', // 在线人数
+	  username: decodeURIComponent(getCookie('username'))
 	}
   },
   mounted () {
@@ -30,7 +33,10 @@ export default {
   },
   methods: {
 
-  }
+  },
+  computed: mapState({
+
+  })
 }
 </script>
 

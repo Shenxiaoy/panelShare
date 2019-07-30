@@ -16,7 +16,6 @@ function ioSend (ctx) {
   socket.on('joinRoom', async data => {
 	socket.join(data.roomName)
 	const info = await getMsg()
-	console.log(info, '-----------')
 	socket.emit('joinRoom', {
 	  mans: onlineNum.length,
 	  initMsgs: info
@@ -31,8 +30,7 @@ function ioSend (ctx) {
     const date = new Date
 	data.time = date
     db.Msg.create(data)
-	const sendInfo = await getMsg()
-	socket.broadcast.to(data.room).emit('receiveMsg', sendInfo)
+	socket.broadcast.to(data.room).emit('receiveMsg', data)
   })
 
   // 在线人数
@@ -61,12 +59,9 @@ function ioSend (ctx) {
 
 async function getMsg () {
   let list = []
-  await db.Msg.find({}, null, {limit: 4}, function (error, data) {
-    list = data
+  await db.Msg.find({}, null, {limit: 20, sort: {'_id': -1}}, function (error, data) {
+    list = data.reverse()
   })
-  //  db.Msg.find({}).sort({'_id': -1}).limit(3).exec(await function (error, data) {
-	// list = data
-  // })
   return list
 }
 
