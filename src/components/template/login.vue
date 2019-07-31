@@ -4,6 +4,7 @@
 				title="请输入登录昵称"
 				:visible.sync="visible"
 				:close-on-click-modal="false"
+				:show-close="false"
 		>
 			<el-input v-model="username" @keyup.enter.native="submit"></el-input>
 
@@ -44,7 +45,7 @@ export default {
 	  setCookie('username', name)
 	  this.visible = false
 	  this.username = name
-	  this.addName(this.userName)
+	  this.addName(name)
 	},
 	...mapMutations([
 	  'addName'

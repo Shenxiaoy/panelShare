@@ -7,15 +7,19 @@ const state = {
   username: ''
 }
 
-const mutation = {
+const mutations = {
   addName (state, view) {
     state.username = view
+  },
+  getMans (state, num) {
+    state.mans = num
   }
+
 }
 
 const store = new vuex.Store({
   state,
-  mutation
+  mutations
 })
 
 export default store

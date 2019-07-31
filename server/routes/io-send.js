@@ -14,11 +14,33 @@ function ioSend (ctx) {
   })
 
   socket.on('joinRoom', async data => {
-	socket.join(data.roomName)
+    // 在线登记
+	db.Outline.create(data)
+	// 加入房间
+	socket.join(data.room)
+	// 返回近50条消息
 	const info = await getMsg()
+	/*// 筛选所有用户
+	db.Msg.find({}).distinct('name').exec(function (error, data) {
+	})*/
+
+	// 在线人数
+	const a = await db.Outline.find({})
+	if(!a.length) {
+	  await db.Outline.create(data)
+	} else {
+	  const isExist = a.find(item => {
+	    return item.username === data.username
+	  })
+	  if (!isExist) {
+		await db.Outline.create(data)
+	  }
+	}
+	const b = await db.Outline.find({})
+	
 	socket.emit('joinRoom', {
-	  mans: onlineNum.length,
-	  initMsgs: info
+	  initMsgs: info,
+	  onlineUsers: b.length
 	})
   })
 
@@ -26,25 +48,23 @@ function ioSend (ctx) {
 	socket.leave(data.roomName)
   })
 
+  /*
+  * 接受客户端的信息
+  * **/
   socket.on('sendMsg', async data => {
+    console.log(data)
     const date = new Date
 	data.time = date
     db.Msg.create(data)
+
+	const a = await db.Outline.find({})
+	data.onlineUsers = a.length
+	socket.emit('onlineUsers', {onlineUsers: a.length})
+
 	socket.broadcast.to(data.room).emit('receiveMsg', data)
   })
 
-  // 在线人数
-  socket.on('onlineUsers', data => {
-	if(!onlineNum.includes(data.interimName)) {
-	  onlineNum.push(data.interimName)
-	}
-	
-	// socket.broadcast.emit('init', {mans: onlineNum.length})
-	socket.emit('init', {mans: onlineNum.length})
-  })
-
   socket.on('leaveChat', data => {
-	console.log(onlineNum)
 	const id = data.id
 
 	if(onlineNum.indexOf(id) !== -1) {
@@ -55,14 +75,47 @@ function ioSend (ctx) {
 	}
 
   })
+
+  socket.on('disconnect', async data => {
+    const cookies = decodeURIComponent(socket.request.headers.cookie)
+	const username = getCookie(cookies, 'username')
+	if(username) {
+	  await db.Outline.deleteOne({username: username})
+	}
+
+  })
 }
 
+// 返回倒叙50条msg消息
 async function getMsg () {
   let list = []
-  await db.Msg.find({}, null, {limit: 20, sort: {'_id': -1}}, function (error, data) {
+  await db.Msg.find({}, null, {limit: 50, sort: {'_id': -1}}, function (error, data) {
     list = data.reverse()
   })
   return list
+}
+
+async function onlineUsers () {
+  let list = []
+  await db.Outline.find({}, function (err, data) {
+    list = data
+  })
+}
+function getCookie (cookies, key) {
+  const strCookie = cookies
+
+  if (strCookie.indexOf(key) > -1) {
+	const arrCookie = strCookie.split("; ")
+	for (let i = 0; i < arrCookie.length; i++) {
+	  const arr = arrCookie[i].split("=")
+
+	  if (arr[0] === key) {
+		return arr[1]
+	  }
+	}
+  } else {
+	return null
+  }
 }
 
 module.exports = ioSend

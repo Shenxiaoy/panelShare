@@ -2,7 +2,7 @@
 	<div>
 		<div class="main">
 			<p>
-				<!--<span>在线人数：{{mans}}</span>-->
+				<span>在线人数：{{mans}}, </span>
 				<span>welcome <span style="color: darkorchid">{{username}}</span>~</span>
 			</p>
 			<Panel>
@@ -24,8 +24,8 @@ export default {
   },
   data () {
     return {
-      mans: '', // 在线人数
-	  username: decodeURIComponent(getCookie('username'))
+      // mans: '', // 在线人数
+	  // username: decodeURIComponent(getCookie('username'))
 	}
   },
   mounted () {
@@ -35,7 +35,8 @@ export default {
 
   },
   computed: mapState({
-
+	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : '',
+	mans: 'mans'
   })
 }
 </script>

@@ -6,10 +6,10 @@
 					<div v-if="item.name === username" style="justify-content: flex-end" class="panel-row-msg">
 
 						<span class="panel-msg-content" >{{item.msg}}</span>
-						<span class="panel-head"><i class="el-icon-key"></i></span>
+						<span class="panel-head"><img :src="item.url ? item.url : headImg1" alt=""></span>
 					</div>
 					<div v-else style="justify-content: flex-start" class="panel-row-msg">
-						<span class="panel-head"><i class="el-icon-key"></i></span>
+						<span class="panel-head"><img :src="item.url ? item.url : headImg2" alt=""></span>
 						<span class="panel-msg-content" >{{item.msg}}</span>
 
 					</div>
@@ -47,7 +47,8 @@ export default {
 	  message: '',
 	  msgList: [],
 	  room: 'world',
-	  username: decodeURIComponent(getCookie('username'))
+	  headImg1: require('../../assets/head/1.png'),
+	  headImg2: require('../../assets/head/2.png'),
 	}
   },
   methods: {
@@ -70,26 +71,34 @@ export default {
   },
   mounted () {
     if (this.room) {
-
 	  const _this = this
-	  socket.emit('onlineUsers', {interimName: 'sxy'})
-	  socket.emit('joinRoom', {roomName: this.room})
+	  // 加入聊天室 默认房间为world
+	  socket.emit('joinRoom', {room: this.room, username: this.username})
 
+	  // 初始化消息列表、在线统计人数
 	  socket.on('joinRoom', function (data) {
+		_this.$store.commit('getMans', data.onlineUsers)
 	    _this.msgList = data.initMsgs
 		_this.scrollBottom()
 	  })
+	  // 同一个房间广播接受消息
       socket.on('receiveMsg', function (data) {
+        console.log(data, '-------------------')
 		_this.msgList.push(data)
 		_this.scrollBottom()
+		// data.onlineUsers ? _this.$store.commit('getMans', data.onlineUsers) : ''
 	  })
+
+	  // 实际在线人数更新
+	  socket.on('onlineUsers', function (data) {
+		_this.$store.commit('getMans', data.onlineUsers)
+	  })
+
 	}
   },
-  computed: {
-	// username () {
-     //  return decodeURIComponent(getCookie('username'))
-	// }
-  }
+  computed: mapState({
+	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : ''
+  })
 
 }
 </script>
@@ -139,7 +148,14 @@ export default {
 		height: 30px;
 		font-size: 30px;
 		border-radius: 50%;
-		border: 1px solid darkorchid;
+		/*border: 1px solid darkorchid;*/
+		overflow: hidden;
+	}
+	.panel-head img {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+
 	}
 	.panel-msg-content {
 		max-width: 50%;
