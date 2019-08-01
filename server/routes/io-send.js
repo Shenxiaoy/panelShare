@@ -8,36 +8,36 @@ function ioSend (ctx) {
   *
   *
   * **/
-  socket.on('message', data => {
-	socket.broadcast.emit('message', data)
-
-  })
+  // socket.on('message', data => {
+	// socket.broadcast.emit('message', data)
+  // })
 
   socket.on('joinRoom', async data => {
     // 在线登记
-	db.Outline.create(data)
+	// db.Outline.create(data)
 	// 加入房间
 	socket.join(data.room)
 	// 返回近50条消息
-	const info = await getMsg()
+	const info = await getMsg(data.room)
 	/*// 筛选所有用户
 	db.Msg.find({}).distinct('name').exec(function (error, data) {
 	})*/
 
 	// 在线人数
-	const a = await db.Outline.find({})
+	const a = await db.Outline.find({room: data.room})
 	if(!a.length) {
 	  await db.Outline.create(data)
 	} else {
 	  const isExist = a.find(item => {
 	    return item.username === data.username
 	  })
+
 	  if (!isExist) {
 		await db.Outline.create(data)
 	  }
 	}
-	const b = await db.Outline.find({})
-	
+	const b = await db.Outline.find({room: data.room})
+
 	socket.emit('joinRoom', {
 	  initMsgs: info,
 	  onlineUsers: b.length
@@ -52,15 +52,13 @@ function ioSend (ctx) {
   * 接受客户端的信息
   * **/
   socket.on('sendMsg', async data => {
-    console.log(data)
     const date = new Date
 	data.time = date
     db.Msg.create(data)
 
-	const a = await db.Outline.find({})
+	const a = await db.Outline.find({room: data.room})
 	data.onlineUsers = a.length
 	socket.emit('onlineUsers', {onlineUsers: a.length})
-
 	socket.broadcast.to(data.room).emit('receiveMsg', data)
   })
 
@@ -76,6 +74,7 @@ function ioSend (ctx) {
 
   })
 
+
   socket.on('disconnect', async data => {
     const cookies = decodeURIComponent(socket.request.headers.cookie)
 	const username = getCookie(cookies, 'username')
@@ -87,9 +86,9 @@ function ioSend (ctx) {
 }
 
 // 返回倒叙50条msg消息
-async function getMsg () {
+async function getMsg (room) {
   let list = []
-  await db.Msg.find({}, null, {limit: 50, sort: {'_id': -1}}, function (error, data) {
+  await db.Msg.find({room: room}, null, {limit: 50, sort: {'_id': -1}}, function (error, data) {
     list = data.reverse()
   })
   return list

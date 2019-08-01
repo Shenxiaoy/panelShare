@@ -5,12 +5,12 @@
 				<div >
 					<div v-if="item.name === username" style="justify-content: flex-end" class="panel-row-msg">
 
-						<span class="panel-msg-content" >{{item.msg}}</span>
+						<span class="panel-msg-content" style="background-color: #9EEA6A" >{{item.msg}}</span>
 						<span class="panel-head"><img :src="item.url ? item.url : headImg1" alt=""></span>
 					</div>
 					<div v-else style="justify-content: flex-start" class="panel-row-msg">
 						<span class="panel-head"><img :src="item.url ? item.url : headImg2" alt=""></span>
-						<span class="panel-msg-content" >{{item.msg}}</span>
+						<span class="panel-msg-content">{{item.msg}}</span>
 
 					</div>
 				</div>
@@ -34,6 +34,7 @@ import Login from './login'
 import socket from '../../pages/ioRequest'
 import {mapState} from 'vuex'
 import {getCookie} from '../../utils/utils'
+import event from './main'
 
 export default {
   name: "panel",
@@ -46,7 +47,7 @@ export default {
     return {
 	  message: '',
 	  msgList: [],
-	  room: 'world',
+	  // room: 'world',
 	  headImg1: require('../../assets/head/1.png'),
 	  headImg2: require('../../assets/head/2.png'),
 	}
@@ -67,26 +68,21 @@ export default {
 	  setTimeout(function () {
 		_this.$refs.panel.scrollTop = _this.$refs.panel.scrollHeight
 	  }, 0)
-	}
-  },
-  mounted () {
-    if (this.room) {
+	},
+	/*
+	* 进入房间消息初始化
+	* **/
+	joinRoomSocketInit () {
 	  const _this = this
+	  this.msgList = []
 	  // 加入聊天室 默认房间为world
 	  socket.emit('joinRoom', {room: this.room, username: this.username})
 
 	  // 初始化消息列表、在线统计人数
 	  socket.on('joinRoom', function (data) {
 		_this.$store.commit('getMans', data.onlineUsers)
-	    _this.msgList = data.initMsgs
+		_this.msgList = data.initMsgs
 		_this.scrollBottom()
-	  })
-	  // 同一个房间广播接受消息
-      socket.on('receiveMsg', function (data) {
-        console.log(data, '-------------------')
-		_this.msgList.push(data)
-		_this.scrollBottom()
-		// data.onlineUsers ? _this.$store.commit('getMans', data.onlineUsers) : ''
 	  })
 
 	  // 实际在线人数更新
@@ -95,9 +91,30 @@ export default {
 	  })
 
 	}
+
+  },
+
+  mounted () {
+    const _this = this
+	event.$on('ok', function (data) {
+	  // _this.joinRoomSocketInit()
+	})
+	if (this.room) {
+	  const _this = this
+	  this.joinRoomSocketInit()
+	  // 同一个房间广播接受消息
+	  socket.on('receiveMsg', function (data) {
+		// console.log(data, '-------------------')
+		_this.msgList.push(data)
+		_this.scrollBottom()
+		// data.onlineUsers ? _this.$store.commit('getMans', data.onlineUsers) : ''
+	  })
+
+	}
   },
   computed: mapState({
-	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : ''
+	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : '',
+	room: 'room'
   })
 
 }

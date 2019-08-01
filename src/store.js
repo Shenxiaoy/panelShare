@@ -3,8 +3,9 @@ import vuex from 'vuex'
 Vue.use(vuex)
 
 const state = {
-  mans: 1,
-  username: ''
+  mans: '',
+  username: '',
+  room: 'world'
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
   },
   getMans (state, num) {
     state.mans = num
+  },
+  setRoom (state, name) {
+    state.room = name
   }
 
 }

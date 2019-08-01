@@ -1,39 +1,38 @@
 <template>
 	<div>
+		<div class="left">
+			<RoomList></RoomList>
+		</div>
 		<div class="main">
 			<p>
 				<span>在线人数：{{mans}}, </span>
 				<span>welcome <span style="color: darkorchid">{{username}}</span>~</span>
 			</p>
-			<Panel>
-				3333
-			</Panel>
+			<Panel></Panel>
 		</div>
 	</div>
 </template>
 
 <script>
 import Panel from '../components/template/panel'
+import RoomList from '../components/template/roomList'
 import {mapState} from 'vuex'
 import {getCookie} from '../utils/utils'
 
 export default {
   name: "index",
   components: {
-    Panel
+	Panel,
+	RoomList
   },
   data () {
-    return {
-      // mans: '', // 在线人数
-	  // username: decodeURIComponent(getCookie('username'))
+	return {
 	}
   },
   mounted () {
 
   },
-  methods: {
-
-  },
+  methods: {},
   computed: mapState({
 	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : '',
 	mans: 'mans'
@@ -42,8 +41,14 @@ export default {
 </script>
 
 <style scoped>
-.main {
-	margin-left: 200px;
-	margin-top: 60px;
-}
+	.main {
+		position: absolute;
+		left: 180px;
+		top: 50px;
+	}
+	.left {
+		position: absolute;
+		left: 10px;
+		top: 120px;
+	}
 </style>
