@@ -4,10 +4,7 @@ const router = require('koa-router')()
 const cors = require('koa2-cors')
 const serve = require('koa-static')
 const IO = require('koa-socket-2')
-const ioSend = require('./routes/io-send')
 const app = new koa()
-const io = new IO()
-io.attach(app)
 
 app.use(serve(__dirname + '/static'))
 
@@ -28,8 +25,6 @@ router.get('/diy', async (ctx, next) => {
 app.use(router.routes())
   .use(router.allowedMethods())
 
-io.on('connection', ioSend)
-
-app.listen(9997, function () {
-  console.log('post:' + 9997)
+app.listen(9998, function () {
+  console.log('post:' + 9998)
 })
