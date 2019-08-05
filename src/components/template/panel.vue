@@ -130,12 +130,26 @@ export default {
 		border-radius: 4px;
 		position: relative;
 		background: #F4F4F4;
+		box-shadow: 0 0 3px 1px #b4bccc;
 	}
 
 	.panel-main {
 		padding: 10px;
 		height: 500px;
 		overflow: auto;
+	}
+	.panel-main::-webkit-scrollbar {
+		width: 5px;
+	}
+	.panel-main::-webkit-scrollbar-track{
+		background-color: #e7e7e7;
+		-webkit-border-radius: 4px;
+		border-radius: 10px;
+
+	}
+	.panel-main::-webkit-scrollbar-thumb {
+		background-color: #f9a7a7;
+		border-radius: 3px;
 	}
 
 	.panel-footer-title {
@@ -177,11 +191,11 @@ export default {
 
 	}
 	.panel-msg-content {
-		max-width: 50%;
+		max-width: 70%;
 		background: #ffffff;
 		padding: 10px;
 		border-radius: 2px;
-
+		word-wrap: break-word;
 	}
 
 </style>
