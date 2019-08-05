@@ -13,6 +13,9 @@
 import {Card} from 'element-ui'
 import {mapMutations} from 'vuex'
 import event from './main'
+import socket from '../../pages/ioRequest'
+// 关闭房间有需要的 leave room
+
 
 export default {
   name: "room-list",
@@ -34,10 +37,10 @@ export default {
 	    'text-shadow': this.roomName === type ? '0 0 1px red' : ''
 	  }
 	},
-	joinRoom (name) {
-	  event.$emit('ok', {ok: 1})
-	  this.roomName = name
+	async joinRoom (name) {
 	  this.setRoom(name)
+	  event.$emit('ok', {room: name})
+	  this.roomName = name
 	},
 	...mapMutations([
 		'setRoom'

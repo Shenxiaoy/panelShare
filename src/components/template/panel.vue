@@ -4,12 +4,13 @@
 			<div v-for="item in msgList">
 				<div >
 					<div v-if="item.name === username" style="justify-content: flex-end" class="panel-row-msg">
-
 						<span class="panel-msg-content" style="background-color: #9EEA6A" >{{item.msg}}</span>
 						<span class="panel-head"><img :src="item.url ? item.url : headImg1" alt=""></span>
 					</div>
 					<div v-else style="justify-content: flex-start" class="panel-row-msg">
-						<span class="panel-head"><img :src="item.url ? item.url : headImg2" alt=""></span>
+						<el-tooltip :content="item.name" placement="left" effect="light">
+							<span class="panel-head"><img :src="item.url ? item.url : headImg2" alt=""></span>
+						</el-tooltip>
 						<span class="panel-msg-content">{{item.msg}}</span>
 
 					</div>
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import {Input, Icon} from 'element-ui'
+import {Input, Icon, Tooltip} from 'element-ui'
 import Login from './login'
 import socket from '../../pages/ioRequest'
 import {mapState} from 'vuex'
@@ -41,7 +42,8 @@ export default {
   components: {
     [Input.name]: Input,
 	[Icon.name]: Icon,
-	Login
+	Login,
+	[Tooltip.name]: Tooltip
   },
   data () {
     return {
@@ -97,20 +99,20 @@ export default {
   mounted () {
     const _this = this
 	event.$on('ok', function (data) {
-	  // _this.joinRoomSocketInit()
+	  _this.joinRoomSocketInit()
 	})
-	if (this.room) {
-	  const _this = this
+
 	  this.joinRoomSocketInit()
 	  // 同一个房间广播接受消息
 	  socket.on('receiveMsg', function (data) {
-		// console.log(data, '-------------------')
+		console.log(data, '-------------------')
+		if (data.room !== _this.room) {
+		  return
+		}
 		_this.msgList.push(data)
 		_this.scrollBottom()
-		// data.onlineUsers ? _this.$store.commit('getMans', data.onlineUsers) : ''
 	  })
 
-	}
   },
   computed: mapState({
 	username: state => state.username ? state.username : getCookie('username') ? decodeURIComponent(getCookie('username')) : '',

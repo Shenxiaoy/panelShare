@@ -52,10 +52,10 @@ function ioSend (ctx) {
   * 接受客户端的信息
   * **/
   socket.on('sendMsg', async data => {
+    console.log(data, 'send----------')
     const date = new Date
 	data.time = date
     db.Msg.create(data)
-
 	const a = await db.Outline.find({room: data.room})
 	data.onlineUsers = a.length
 	socket.emit('onlineUsers', {onlineUsers: a.length})
@@ -89,7 +89,7 @@ function ioSend (ctx) {
 async function getMsg (room) {
   let list = []
   await db.Msg.find({room: room}, null, {limit: 50, sort: {'_id': -1}}, function (error, data) {
-    list = data.reverse()
+    list = data ? data.reverse() :[]
   })
   return list
 }
