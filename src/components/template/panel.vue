@@ -2,9 +2,9 @@
 	<div class="panel-wraper">
 		<div class="panel-main" ref="panel">
 			<div v-for="item in msgList">
-				<div >
+				<div>
 					<div v-if="item.name === username" style="justify-content: flex-end" class="panel-row-msg">
-						<span class="panel-msg-content" style="background-color: #9EEA6A" >{{item.msg}}</span>
+						<span class="panel-msg-content" style="background-color: #9EEA6A">{{item.msg}}</span>
 						<span class="panel-head"><img :src="item.url ? item.url : headImg1" alt=""></span>
 					</div>
 					<div v-else style="justify-content: flex-start" class="panel-row-msg">
@@ -40,13 +40,13 @@ import event from './main'
 export default {
   name: "panel",
   components: {
-    [Input.name]: Input,
+	[Input.name]: Input,
 	[Icon.name]: Icon,
 	Login,
 	[Tooltip.name]: Tooltip
   },
   data () {
-    return {
+	return {
 	  message: '',
 	  msgList: [],
 	  // room: 'world',
@@ -97,21 +97,21 @@ export default {
   },
 
   mounted () {
-    const _this = this
+	const _this = this
 	event.$on('ok', function (data) {
 	  _this.joinRoomSocketInit()
 	})
 
-	  this.joinRoomSocketInit()
-	  // 同一个房间广播接受消息
-	  socket.on('receiveMsg', function (data) {
-		console.log(data, '-------------------')
-		if (data.room !== _this.room) {
-		  return
-		}
-		_this.msgList.push(data)
-		_this.scrollBottom()
-	  })
+	this.joinRoomSocketInit()
+	// 同一个房间广播接受消息
+	socket.on('receiveMsg', function (data) {
+	  // console.log(data, '-------------------')
+	  if (data.room !== _this.room) {
+		return
+	  }
+	  _this.msgList.push(data)
+	  _this.scrollBottom()
+	})
 
   },
   computed: mapState({
@@ -138,15 +138,18 @@ export default {
 		height: 500px;
 		overflow: auto;
 	}
+
 	.panel-main::-webkit-scrollbar {
 		width: 5px;
 	}
-	.panel-main::-webkit-scrollbar-track{
+
+	.panel-main::-webkit-scrollbar-track {
 		background-color: #e7e7e7;
 		-webkit-border-radius: 4px;
 		border-radius: 10px;
 
 	}
+
 	.panel-main::-webkit-scrollbar-thumb {
 		background-color: #f9a7a7;
 		border-radius: 3px;
@@ -172,10 +175,12 @@ export default {
 		display: flex;
 		align-items: flex-start;
 	}
+
 	.panel-row-msg span {
 		display: inline-block;
 		margin-left: 8px;
 	}
+
 	.panel-head {
 		width: 30px;
 		height: 30px;
@@ -184,12 +189,14 @@ export default {
 		/*border: 1px solid darkorchid;*/
 		overflow: hidden;
 	}
+
 	.panel-head img {
 		display: inline-block;
 		width: 30px;
 		height: 30px;
 
 	}
+
 	.panel-msg-content {
 		max-width: 70%;
 		background: #ffffff;
