@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 const routes = [
   {path: '/4', component: Children4},
   {path: '/', component: App},
-  {path: '/1', component: NotePanel},
+  {path: '/notice', component: NotePanel},
 ]
 
 const router = new VueRouter({

@@ -41,13 +41,13 @@ export default {
 		  let imgSrc = ''
 		  const data = new FormData()
 		  data.append('file', blob)
-		  data.append('token', '9h5kHWHnr20ObcQ45Efmw7Y2J8Dn_0lvl6ch0cTZ:DfK86L-kmnhxEfLPD8yYPqr8MOM=:eyJzY29wZSI6ImNvbyIsImRlYWRsaW5lIjoxNTY3NjUwMjA1fQ==')
+		  data.append('token', '9h5kHWHnr20ObcQ45Efmw7Y2J8Dn_0lvl6ch0cTZ:V8M-iZIxEqh-DyJaACrUA_5WhD4=:eyJzY29wZSI6ImNvbyIsImRlYWRsaW5lIjoxNTg2NjU5NTUxfQ==')
 		  axios({
 			method: 'post',
 			url: 'http://upload-z2.qiniup.com',
 			data: data
 		  }).then(result => {
-			imgSrc = `http://pw61eveyx.bkt.clouddn.com/${result.data.key}`
+			imgSrc = `http://image.shenxiaoyu.cn/${result.data.key}`
 			let imgs = new Image()
 			imgs.src = imgSrc
 			imgs.style.display = 'inline-block'
@@ -117,13 +117,13 @@ export default {
 <style scoped>
 	.panel-app {
 		display: flex;
-		justify-content: center;
+		justify-content: flex-start;
 		align-items: center;
 	}
 
 	.box-wrap {
 		width: 400px;
-		height: 650px;
+		height: 60vh;
 		box-shadow: 0 0 3px 0 slateblue;
 		overflow: auto;
 		resize: both;
@@ -140,8 +140,12 @@ export default {
 	@media screen and (max-width: 600px) {
 		.box-wrap {
 			/*position: fixed;*/
-			width: 90vw;
-			height: 100vh;
+			width: 80vw;
+			height: 80vh;
+			padding: 5vw;
+		}
+		.panel-app {
+			justify-content: center;
 		}
 	}
 
