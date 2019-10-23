@@ -34,3 +34,4 @@ function setCookie (name, value, day) {
 function delCookie (name) {
   setCookie(name, ' ', -1)
 }
+

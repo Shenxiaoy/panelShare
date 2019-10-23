@@ -127,7 +127,7 @@ export default {
 		box-shadow: 0 0 3px 0 slateblue;
 		overflow: auto;
 		resize: both;
-		padding: 10px;
+		padding: 20px;
 		text-align: left;
 		line-height: 20px;
 		border-radius: 3px;

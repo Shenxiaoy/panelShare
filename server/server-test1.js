@@ -22,6 +22,7 @@ app.use(cors({
 router.post('/notepanel/main/message', async (ctx, next) => {
   const queryData = ctx.request.body
   // db.panelNotes.create({title: '我的便签', content: 'test', username: 'sxy'})
+  // updateOne 不能够创建数据
   await db.panelNotes.updateOne({title: queryData.title}, {content: queryData.str})
   ctx.response.body = {code: 1, meg: 'success'}
 
